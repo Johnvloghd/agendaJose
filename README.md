@@ -1,1 +1,1 @@
-# agendaJose
+# ALTER TABLE agendamentos ADD COLUMN IF NOT
