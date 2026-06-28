@@ -2,7 +2,6 @@ package view;
 
 import controller.AgendaController;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import model.Agendamento;
@@ -15,9 +14,8 @@ public class AgendaView extends HBox {
     private AgendaController agendaController = new AgendaController();
     private String usuarioAtual;
 
-    // Componentes Visuais Modernizados
     private ComboBox<String> cbProfissional = new ComboBox<>();
-    private DatePicker pickerData = new DatePicker(LocalDate.now()); // CALENDÁRIO NATIVO
+    private DatePicker pickerData = new DatePicker(LocalDate.now());
     private ComboBox<String> cbHorarios = new ComboBox<>();
     private TextField txtCliente = new TextField();
     private TextField txtTelefone = new TextField();
@@ -25,66 +23,68 @@ public class AgendaView extends HBox {
     private ComboBox<String> cbProcedimento = new ComboBox<>();
     private TextArea txtMensagem = new TextArea();
     
-    // Botões de Ação e Gerenciamento
-    private Button btnConfirmar = new Button("Confirmar Agendamento (ENTER)");
-    private Button btnAddProcedimento = new Button("➕ Procedimento");
-    private Button btnAddBarbeiro = new Button("➕ Barbeiro");
+    private Button btnConfirmar = new Button("CONFIRMAR AGENDAMENTO");
+    private Button btnAddProcedimento = new Button("➕ Novo Serviço");
+    private Button btnAddBarbeiro = new Button("➕ Novo Profissional");
 
     public AgendaView(String usuarioAtual) {
         this.usuarioAtual = usuarioAtual;
-        this.setPadding(new Insets(20));
-        this.setSpacing(25);
-        this.setStyle("-fx-background-color: #242424;"); // Fundo Grafite Escuro
+        this.setPadding(new Insets(10));
+        this.setSpacing(30);
+        this.setStyle("-fx-background-color: transparent;");
 
-        // Estilização Comum (CSS Embutido para Interface Premium)
-        String estiloInput = "-fx-background-color: #333333; -fx-text-fill: white; -fx-border-color: #444444; -fx-border-radius: 4; -fx-padding: 6;";
-        String estiloLabel = "-fx-text-fill: #b3b3b3; -fx-font-weight: bold;";
+        String estiloInput = "-fx-background-color: #333333; -fx-text-fill: white; -fx-border-color: #444444; -fx-border-radius: 4; -fx-padding: 8;";
+        String estiloLabel = "-fx-text-fill: #b3b3b3; -fx-font-weight: bold; -fx-font-size: 12px;";
+        String estiloBtnGerenciamento = "-fx-background-color: #3a3a3a; -fx-text-fill: #ff9900; -fx-font-size: 11px; -fx-cursor: hand; -fx-font-weight: bold; -fx-padding: 5 10 5 10;";
 
-        // --- PAINEL DA ESQUERDA (Agendamento e Contatos) ---
-        VBox painelEsquerda = new VBox(10);
-        painelEsquerda.setPrefWidth(380);
+        // --- COLUNA ESQUERDA (Dados Básicos de Tempo e Profissional) ---
+        VBox painelEsquerda = new VBox(12);
+        painelEsquerda.setPrefWidth(450);
 
-        Label lblProf = new Label("Profissional:"); lblProf.setStyle(estiloLabel);
+        Label lblProf = new Label("PROFISSIONAL RESPONSÁVEL"); lblProf.setStyle(estiloLabel);
         carregarProfissionais();
         cbProfissional.setStyle(estiloInput);
+        cbProfissional.setMaxWidth(Double.MAX_VALUE);
 
-        Label lblData = new Label("Selecionar Data (Calendário):"); lblData.setStyle(estiloLabel);
+        Label lblData = new Label("DATA DO ATENDIMENTO"); lblData.setStyle(estiloLabel);
         pickerData.setStyle("-fx-control-inner-background: #333333;");
+        pickerData.setMaxWidth(Double.MAX_VALUE);
 
-        Label lblHorario = new Label("Horário:"); lblHorario.setStyle(estiloLabel);
-        cbHorarios.getItems().addAll("08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "13:00", "14:00", "15:00");
+        Label lblHorario = new Label("HORÁRIO DISPONÍVEL"); lblHorario.setStyle(estiloLabel);
+        cbHorarios.getItems().addAll("08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00");
         cbHorarios.setValue("08:00");
         cbHorarios.setStyle(estiloInput);
+        cbHorarios.setMaxWidth(Double.MAX_VALUE);
 
-        Label lblDados = new Label("Dados do Cliente:"); lblDados.setStyle("-fx-text-fill: #e0e0e0; -fx-font-size: 14px; -fx-font-weight: bold;");
-        txtCliente.setPromptText("Nome do Cliente"); txtCliente.setStyle(estiloInput);
-        txtTelefone.setPromptText("Telefone Celular"); txtTelefone.setStyle(estiloInput);
-        txtEmail.setPromptText("E-mail corporativo"); txtEmail.setStyle(estiloInput);
+        Label lblDados = new Label("INFORMAÇÕES DO CLIENTE"); lblDados.setStyle("-fx-text-fill: #e0e0e0; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 10 0 0 0;");
+        txtCliente.setPromptText("Nome Completo"); txtCliente.setStyle(estiloInput);
+        txtTelefone.setPromptText("Telefone / WhatsApp"); txtTelefone.setStyle(estiloInput);
+        txtEmail.setPromptText("E-mail de Contato"); txtEmail.setStyle(estiloInput);
 
         painelEsquerda.getChildren().addAll(lblProf, cbProfissional, lblData, lblHorario, cbHorarios, 
-                                            new Separator(), lblDados, txtCliente, txtTelefone, txtEmail);
+                                            lblDados, txtCliente, txtTelefone, txtEmail);
 
-        // --- PAINEL DA DIREITA (Serviços e Gestão Rápida) ---
+        // --- COLUNA DIREITA (Serviços, Gestão Rápida e Confirmação) ---
         VBox painelDireita = new VBox(12);
-        painelDireita.setPrefWidth(380);
-        painelDireita.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 15; -fx-border-color: #3a3a3a; -fx-border-radius: 8;");
+        painelDireita.setPrefWidth(450);
+        painelDireita.setStyle("-fx-background-color: #1e1e1e; -fx-padding: 20; -fx-border-color: #2d2d2d; -fx-border-radius: 8;");
 
-        Label lblProc = new Label("Procedimento:"); lblProc.setStyle(estiloLabel);
+        Label lblProc = new Label("PROCEDIMENTO / SERVIÇO"); lblProc.setStyle(estiloLabel);
         cbProcedimento.setStyle(estiloInput);
+        cbProcedimento.setMaxWidth(Double.MAX_VALUE);
         carregarProcedimentos();
 
-        // Linha com os botões rápidos de cadastrar itens novos
         HBox painelBotoesConfig = new HBox(10);
-        btnAddProcedimento.setStyle("-fx-background-color: #3a3a3a; -fx-text-fill: white; -fx-cursor: hand;");
-        btnAddBarbeiro.setStyle("-fx-background-color: #3a3a3a; -fx-text-fill: white; -fx-cursor: hand;");
+        btnAddProcedimento.setStyle(estiloBtnGerenciamento);
+        btnAddBarbeiro.setStyle(estiloBtnGerenciamento);
         painelBotoesConfig.getChildren().addAll(btnAddProcedimento, btnAddBarbeiro);
 
-        Label lblObs = new Label("Observações do Serviço:"); lblObs.setStyle(estiloLabel);
-        txtMensagem.setPromptText("Ex: Cliente quer degradê navalhado, restrição a produtos alérgicos...");
+        Label lblObs = new Label("OBSERVAÇÕES ADICIONAIS"); lblObs.setStyle(estiloLabel);
+        txtMensagem.setPromptText("Restrições, especificações do corte, etc...");
         txtMensagem.setStyle(estiloInput);
-        txtMensagem.setPrefHeight(100);
+        txtMensagem.setPrefHeight(150);
 
-        btnConfirmar.setStyle("-fx-background-color: #ff9900; -fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 10; -fx-cursor: hand; -fx-background-radius: 5;");
+        btnConfirmar.setStyle("-fx-background-color: #ff9900; -fx-text-fill: black; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 12; -fx-cursor: hand; -fx-background-radius: 4;");
         btnConfirmar.setMaxWidth(Double.MAX_VALUE);
 
         painelDireita.getChildren().addAll(lblProc, cbProcedimento, painelBotoesConfig, new Separator(), lblObs, txtMensagem, btnConfirmar);
@@ -110,36 +110,35 @@ public class AgendaView extends HBox {
 
     private void configurarAcoes() {
         btnConfirmar.setOnAction(e -> executarAgendamento());
+        
         txtCliente.setOnKeyPressed(event -> {
             if (event.getCode().toString().equals("ENTER")) executarAgendamento();
         });
 
-        // Janela Pop-up rápida para Adicionar Novo Procedimento dinamicamente
         btnAddProcedimento.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Novo Procedimento");
-            dialog.setHeaderText("Cadastrar serviço na Barbearia");
-            dialog.setContentText("Nome do Procedimento:");
+            dialog.setTitle("Configuração do Sistema");
+            dialog.setHeaderText("Cadastrar Novo Procedimento");
+            dialog.setContentText("Nome do Serviço:");
             dialog.showAndWait().ifPresent(nome -> {
                 if (!nome.trim().isEmpty()) {
                     agendaController.cadastrarProcedimento(nome.trim());
-                    carregarProcedimentos(); // Recarrega o menu na hora
-                    LoggerUtil.registrarAcao(usuarioAtual, "Cadastrou novo procedimento: " + nome);
+                    carregarProcedimentos();
+                    LoggerUtil.registrarAcao(usuarioAtual, "Cadastrou o procedimento: " + nome);
                 }
             });
         });
 
-        // Janela Pop-up rápida para Adicionar Novo Barbeiro dinamicamente
         btnAddBarbeiro.setOnAction(e -> {
             TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("Novo Barbeiro");
-            dialog.setHeaderText("Cadastrar profissional na equipe");
-            dialog.setContentText("Nome do Barbeiro:");
+            dialog.setTitle("Configuração do Sistema");
+            dialog.setHeaderText("Cadastrar Novo Profissional da Equipe");
+            dialog.setContentText("Nome Completo:");
             dialog.showAndWait().ifPresent(nome -> {
                 if (!nome.trim().isEmpty()) {
                     agendaController.cadastrarProfissional(nome.trim(), nome.toLowerCase().replace(" ", "") + "@barbearia.com");
-                    carregarProfissionais(); // Recarrega o menu na hora
-                    LoggerUtil.registrarAcao(usuarioAtual, "Cadastrou novo profissional: " + nome);
+                    carregarProfissionais();
+                    LoggerUtil.registrarAcao(usuarioAtual, "Cadastrou o profissional: " + nome);
                 }
             });
         });
@@ -152,7 +151,7 @@ public class AgendaView extends HBox {
         String procedimentoSelecionado = cbProcedimento.getValue();
 
         if (cliente.isEmpty() || dataSelecionada == null || horarioSelecionado == null || procedimentoSelecionado == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Preencha todos os campos obrigatórios!");
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Campos obrigatórios ausentes. Verifique os dados do formulário.");
             alert.showAndWait();
             return;
         }
@@ -162,15 +161,13 @@ public class AgendaView extends HBox {
                 cbProfissional.getValue(), dataSelecionada.toString(), horarioSelecionado, procedimentoSelecionado, txtMensagem.getText()
         );
 
-        boolean sucesso = agendaController.salvarAgendamento(novo);
-
-        if (sucesso) {
-            LoggerUtil.registrarAcao(usuarioAtual, "Agendamento marcado para " + cliente + " no dia " + dataSelecionada + " às " + horarioSelecionado);
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Agendamento salvo com sucesso no sistema!");
+        if (agendaController.salvarAgendamento(novo)) {
+            LoggerUtil.registrarAcao(usuarioAtual, "Agendamento confirmado para " + cliente + " | Data: " + dataSelecionada + " às " + horarioSelecionado);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Atendimento agendado com sucesso!");
             alert.showAndWait();
             limparCampos();
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar no PostgreSQL!");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Falha de persistência no banco de dados.");
             alert.showAndWait();
         }
     }
